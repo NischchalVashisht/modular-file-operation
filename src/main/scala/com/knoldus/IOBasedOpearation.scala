@@ -1,12 +1,12 @@
 package com.knoldus
+
 import scala.io.Source
-import java.io.{File, FileWriter, PrintWriter}
+import java.io.{File, FileWriter}
 
-import scala.collection.MapView
 
-class IOBasedOpearation {
+class IOBasedOpearation extends ConnectionTrait {
 
-  def getListOfFiles(dir: String): List[File] = {
+ override def getListOfFile(dir: String): List[File] = {
     val file = new File(dir)
     if (file.exists && file.isDirectory) {
       file.listFiles.toList
@@ -15,12 +15,11 @@ class IOBasedOpearation {
     }
   }
 
-  def readAndTransform(filename: File, outputDir: String): String = {
-    val copyFileName=filename.getName
-    val fw = new FileWriter(s"$outputDir/"+copyFileName)
+  override def readAndTransform(filename: File, outputDir: String): String = {
+    val copyFileName = filename.getName
+    val fw = new FileWriter(s"$outputDir/" + copyFileName)
     for (line <- Source.fromFile(filename.toString).getLines) {
-      fw.write(line.toUpperCase()+"\n")
-      //fw.nex
+      fw.write(line.toUpperCase() + "\n")
       println(line)
     }
     fw.close()
@@ -44,23 +43,15 @@ class IOBasedOpearation {
     }
   }
 
- def wordCount(fileName:String,outputDir:String):Map[String,Int]={
-   val fw = new FileWriter(s"$outputDir/"+fileName.split("/").last)
-   val resultMap:Map[String,Int]= scala.io.Source.fromFile(fileName).getLines.flatMap(_.split("[\" \" \\.]")).foldLeft(Map.empty[String, Int]){(count, word) => count + (word.toLowerCase -> (count.getOrElse(word.toLowerCase, 0) + 1))}
+   override def wordCount(fileName: String, outputDir: String): Map[String, Int] = {
+    val fw = new FileWriter(s"$outputDir/" + fileName.split("/").last)
+    val resultMap: Map[String, Int] = scala.io.Source.fromFile(fileName).getLines.flatMap(_.split("[\" \" \\.]")).foldLeft(Map.empty[String, Int]) { (count, word) => count + (word.toLowerCase -> (count.getOrElse(word.toLowerCase, 0) + 1)) }
 
-   fw.write(resultMap.toString())
-   fw.close
-   resultMap
+    fw.write(resultMap.toString())
+    fw.close
+    resultMap
 
-   }
-
-}
-object IOBasedOpearation extends App{
-  val classObject =new IOBasedOpearation
-  //val listOfFileInDirectory= classObject.getListOfFiles("/home/knoldus/Downloads/Io2")
-  //println(listOfFileInDirectory)
- //val listOfUpdatedFile =classObject.transformFile(listOfFileInDirectory,"/home/knoldus/Downloads/Io1",List.empty[String])
-  classObject.wordCount("/home/knoldus/Downloads/Io2/Test.sbt","/home/knoldus/Downloads/Io1")
-
+  }
 
 }
+
